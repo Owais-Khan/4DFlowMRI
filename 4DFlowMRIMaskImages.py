@@ -10,9 +10,42 @@ class FlowMRIMaskImages():
 		self.Args=Args
 
 	def Main(self):
+		
 		#Load the 3D Surface
 		print ("--- Loading Surface File:%s"%self.Args.InputSurface)
 		Surface=ReadVTPFile(self.Args.InputSurface)
+		 #Load the 3D Surface
+                print ("--- Loading Surface File:%s"%self.Args.InputSurface)
+                Surface=ReadVTPFile(self.Args.InputSurface)
+
+                #Convert DICOM to VTI
+                FileList = os.listdir(self.Args.InputFolder4DMRI)
+                Nfiles = len(FileList)
+                print (os.path.isdir("%s/%s"%(self.Args.InputFolder4DMRI,FileList[0])))
+                print (os.path.isdir("%s/%s"%(self.Args.InputFolder4DMRI,FileList[3])))
+                for i in range (0,Nfiles):
+                        if os.path.isdir ("%s/%s"%(self.Args.InputFolder4DMRI,FileList[i])) == 1:
+                                print ("--- Converting DICOM files to VTI:%s"%FileList[i])
+                                CycleList = os.listdir("%s/%s"%(self.Args.InputFolder4DMRI,FileList[i]))
+                                Ncycles = len(CycleList)
+                                for j in range (0,Ncycles):
+                                        AngioConvert = vtk.vtkDICOMImageReader()
+                                        AngioConvert.SetDirectoryName("%s/%s/%s"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j]))
+                                        AngioConvert.Update()
+
+                                        #Image Slicer
+                                        volume_mapper = vtk.vtkSmartVolumeMapper()
+                                        volume_mapper.SetInputData(AngioConvert.GetOutput())
+
+                                        image_slice = vtk.vtkVolume()
+                                        image_slice.SetMapper(volume_mapper)
+                                        image_slice.Update()
+
+                                        #Write Unmasked VTI File
+                                        print ("--- Writing Unmasked VTI File:%s/%s/%s"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j]))
+                                        WriteVTIFile ("%s/%s/%s/RawImage_%s.vti"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j],CycleList[j]),image_slice)
+                        else:
+                                continue
 
 		#Load the Angiography Images
 		print ("--- Loading Angiography Image:%s"%self.Args.InputFileAngio)
