@@ -35,7 +35,7 @@ class FlowMRIMaskImages():
 
                                         #Write Unmasked VTI File
                                         print ("--- Writing Unmasked VTI File:%s/%s/%s"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j]))
-                                        WriteVTIFile ("%s/%s/%s/RawImage_%s.vti"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j],CycleList[j]),image_slice)
+                                        WriteVTIFile ("%s/%s/%s/RawImage_%s.vti"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j],CycleList[j]),AngioConvert.GetOutput())
                         else:
                                 continue
 
