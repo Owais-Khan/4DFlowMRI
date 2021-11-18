@@ -33,14 +33,6 @@ class FlowMRIMaskImages():
                                         AngioConvert.SetDirectoryName("%s/%s/%s"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j]))
                                         AngioConvert.Update()
 
-                                        #Image Slicer
-                                        volume_mapper = vtk.vtkSmartVolumeMapper()
-                                        volume_mapper.SetInputData(AngioConvert.GetOutput())
-
-                                        image_slice = vtk.vtkVolume()
-                                        image_slice.SetMapper(volume_mapper)
-                                        image_slice.Update()
-
                                         #Write Unmasked VTI File
                                         print ("--- Writing Unmasked VTI File:%s/%s/%s"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j]))
                                         WriteVTIFile ("%s/%s/%s/RawImage_%s.vti"%(self.Args.InputFolder4DMRI,FileList[i],CycleList[j],CycleList[j]),image_slice)
