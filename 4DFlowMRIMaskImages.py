@@ -14,11 +14,12 @@ class FlowMRIMaskImages():
 		#Load the 3D Surface
 		print ("--- Loading Surface File:%s"%self.Args.InputSurface)
 		Surface=ReadVTPFile(self.Args.InputSurface)
-		 #Load the 3D Surface
-                
-		print ("--- Loading Surface File:%s"%self.Args.InputSurface)
-		Surface=ReadVTPFile(self.Args.InputSurface)
 
+		#Load Angio Image
+		print ("--- Loading Angio Image: %s"%self.Args.InputFileAngio)
+		RawAngio = ReadVTIFile(self.Args.InputFileAngio)
+
+		#DICOM to VTI
 		print ("--- Converting Dicoms to VTI Stacks")
 		OutFileNames=self.ConvertDicomsToVTI()		
 		
@@ -28,24 +29,29 @@ class FlowMRIMaskImages():
 			Image_=ReadVTIFile(OutFileName_)
 
 			#Scale the Image to correct origin and to cm instead of mm
-			ImageScaled_=ScaleImage(Image_)
-			
+			origin = RawAngio.GetOrigin()
+			spacing = RawAngio.GetSpacing()
+
+			Image_.SetOrigin(origin)
+			Image_.SetSpacing(spacing)	
+
 
 			#Save the Scaled Image
-			WriteVTIFile(OutFileName_,ImageScaled_)
+			WriteVTIFile(OutFileName_,Image_)
 	
-
+			print(dir(Image_))
 			#Mask the Angio Image using the 3D Model
 			print ("--- Create a Masking Function Using the Images")
-			MaskingFunction=self.MaskingFunction(ImageScaled_,Surface)
+			MaskingFunction=self.MaskingFunction(Image_,Surface)
+			
 
 			#Apply the Mask to the Image
 			print ("--- Applying the Mask to the Image")
-			AngioImages=self.ApplyMaskToImage(ImageScaled_,MaskingFunction)
+			AngioImages=self.ApplyMaskToImage(Image_,MaskingFunction)
 		
 			#Save the VTI File 
 			print ("--- Write the VTI File")
-			WriteVTIFile(OutFileName_.replace("RawImage","RawImageMasked"),ImageScaled_)	
+			WriteVTIFile(OutFileName_.replace("RawImage","RawImageMasked"),Image_)	
 
 
 	def ConvertDicomsToVTI(self):
@@ -58,8 +64,7 @@ class FlowMRIMaskImages():
 	
 		NFolders= len(FolderList)
 		for i in range (0,NFolders):
-			os.system("rm %s/*.vti"%FolderList[i])
-			
+			os.system("rm %s/*.vti"%FolderList[i])	
 			print ("------ Looping over: %s"%FolderList[i])
 			#AngioConvert_ = vtk.vtkDICOMImageReader()
 			#AngioConvert_.SetDirectoryName(FolderList[i])
@@ -80,26 +85,27 @@ class FlowMRIMaskImages():
 			#Just take one file from the folder
 			infile_=glob(FolderList[i]+"/*.IMA")+glob(FolderList[i]+"/*.dcm")
 		
-			os.system("vmtkimagewriter -ifile %s -ofile %s"%(infile_[0],OutFileName_))	
+			os.system("vmtkimagewriter -ifile %s -ofile %s"%(infile_[i],OutFileName_))	
 			return OutFileList
-	def ApplyMaskToImage(self,AngioImages,MaskingFunction):
-		Npts=AngioImages.GetNumberOfPoints()
+	def ApplyMaskToImage(self,Image_,MaskingFunction):
+		Npts=Image_.GetNumberOfPoints()
+		counter = 0
 		for i in range(0,Npts):
 			if MaskingFunction.IsInside(i)==0:
-				AngioImages.GetPointData().GetArray("Scalars_").SetValue(i,1000000)
+				Image_.GetPointData().GetArray("ImageScalars").SetValue(i,0)
 			else:
 				counter+=1
-		return AngioImages
+		return Image_
 
-	def MaskingFunction(self,AngioImages,Surface):
+	def MaskingFunction(self,Image_,Surface):
 		
-		Npts=AngioImages.GetNumberOfPoints()
+		Npts=Image_.GetNumberOfPoints()
 
 		#Create an array that has all of the points
 		print ("------ Extracting Points from Image Data")
 		ImagePoints = vtk.vtkPoints()
 		for i in range(Npts):
-			point_=AngioImages.GetPoint(i)
+			point_=Image_.GetPoint(i)
 			ImagePoints.InsertNextPoint(point_[0],point_[1],point_[2])
 
 		#Createa a vtk point data function to store the point data
@@ -122,7 +128,7 @@ if __name__=="__main__":
 	parser.add_argument('-InputFolder4DMRI', '--InputFolder4DMRI', type=str, required=True, dest="InputFolder4DMRI",help="The foldername that contains the 4DFlow Magnitude, Phase1, Phase2 and Phase3 images in dicom format")
 
 	#Provide a path to the Angio images
-	parser.add_argument('-InputFileAngio', '--InputFileAngio', type=str, required=False, dest="InputFileAngio",help="The filename that contains the Angio images in vti format")
+	parser.add_argument('-InputFileAngio', '--InputFileAngio', type=str, required=True, dest="InputFileAngio",help="The filename that contains the Angio images in vti format")
 
 	#Provide a path to the surface file segmented from the angio images
 	parser.add_argument('-InputSurface', '--InputSurface', type=str, required=True, dest="InputSurface",help="The surface file that contains the model segmented from Angio images (likely in SimVascular)")
