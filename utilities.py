@@ -163,11 +163,6 @@ def PrintProgress(self,i,N,progress_old):
 	if progress_%10==0 and progress_%10!=progress_old: print ("    Progress: %d%%"%progress_)
 	return progress_%10
 
-def ScaleImage(Image):
-	print(dir(Image))
-	print (Image.GetSpacing())
-	exit(1)
-
 
 
 ################ Direction Function ###########
