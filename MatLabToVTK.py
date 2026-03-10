@@ -138,9 +138,8 @@ class MatLabToVTK():
 				else: raise Exception("Reflection plane not known: %s"%self.Args.ReflectionPlane) 
 				reflection_filter.SetCopyInput(0)
 				reflection_filter.Update()
-				ImageData=reflection_filter.GetOutput()
 
-			if   self.Args.FileFormat=="vti": WriteVTIFile(self.Args.OutputFolder+"/Velocity_%.03d.vti"%i,ImageData)
+			if   self.Args.FileFormat=="vti": WriteVTIFile(self.Args.OutputFolder+"/Velocity_%.03d.vti"%i,reflection_filter.GetOutput())
 			elif self.Args.FileFormat=="nii.gz": WriteNIFTIFile(self.Args.OutputFolder+"/Velocity_%.03d.nii.gz"%i,ImageData)
 			else: raise ExceptionName("Output file format %s not recognized"%self.Args.FileFormat)
 		

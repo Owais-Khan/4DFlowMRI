@@ -21,27 +21,29 @@ strongly recommended.
 
 ## Scripts
 
-## FlowMRI_MatlabToVTK
+### MatlabToVTK.py
 **Description:** This script with convert 4D Flow MRI volume stored in matlab format into vtk format. Currently, the matlab file is expected to have an array "PCMR" that should have the data stored in the following format [X Y Z T Mag U V W].
+
 **Code:**
 ```python FlowMRI_MatlabToVTK.py -InputFileName [MatlabData.mat]```
+
 **Optional arguments:**
 * ```--OutputFolder```: Folder to store the output .vtk images. Default=Stores to the same folder as input file.
 * ```--FileFormat```: Supports .vti and .nii.gz files. Default=".vti"
 * ```--ReflectionPlane```: You can reflect the output image about X Y Z planes. Options include XMin YMin ZMin XMax YMax ZMax. Default=None
 
 
-## Read and process 4D flow dicom files
+### Read and process 4D flow dicom files
 ```
 python dicoms_to_vtk.py
 ```
 
-## Interactive plane selection and velocity profile extraction
+### Interactive plane selection and velocity profile extraction
 ```
 python plane_selection.py
 ```
 
-## Map precomputed velocity profiles to a target inlet shape
+### Map precomputed velocity profiles to a target inlet shape
 ```
 python mapping.py
 ```
