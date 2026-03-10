@@ -1,4 +1,4 @@
-# flow4D
+# 4DFlowMRI
 This repository can be used to work with 4D flow MRI acquisitions for CFD applications. <br/>
 
 Cite the code: [![DOI](https://zenodo.org/badge/295950364.svg)](https://zenodo.org/badge/latestdoi/295950364) <br/>
@@ -17,6 +17,15 @@ strongly recommended.
 - [vmtk](https://github.com/conda-forge/vmtk-feedstock) (optional, only required for centerline extraction)
 - pydicom
 - pyvista
+
+##FlowMRI_MatlabToVTK
+**Description:** This script with convert 4D Flow MRI volume stored in matlab format into vtk format. Currently, the matlab file is expected to have an array "PCMR" that should have the data stored in the following format [X Y Z T Mag U V W].
+**Code:**
+```python FlowMRI_MatlabToVTK.py -InputFileName [MatlabData.mat]```
+**Optional arguments:**
+* ```--OutputFolder```: Folder to store the output .vtk images. Default=Stores to the same folder as input file.
+* ```--FileFormat```: Supports .vti and .nii.gz files. Default=".vti"
+* ```--ReflectionPlane```: You can reflect the output image about X Y Z planes. Options include XMin YMin ZMin XMax YMax ZMax. Default=None
 
 
 ## Read and process 4D flow dicom files
