@@ -3,13 +3,13 @@ This repository can be used to work with 4D flow MRI acquisitions for CFD applic
 
 Cite the code: [![DOI](https://zenodo.org/badge/295950364.svg)](https://zenodo.org/badge/latestdoi/295950364) <br/>
 
-## Features
+### Features
 The main provided functionalities enable to: 
 - read 4D flow dicom files and generate .vtk files that can be visualized in Paraview;
 - extract velocity profiles from 4D flow and map them to the inlet of a target model;
 - write boundary conditions files for multiple CFD software, including Fluent, CFX, Star-CCM+, OpenFoam, SimVascular
 
-## Installation
+### Installation
 To run the scripts you need a python interpreter. The use of a conda environment is 
 strongly recommended. 
 
@@ -18,7 +18,10 @@ strongly recommended.
 - pydicom
 - pyvista
 
-##FlowMRI_MatlabToVTK
+
+## Scripts
+
+## FlowMRI_MatlabToVTK
 **Description:** This script with convert 4D Flow MRI volume stored in matlab format into vtk format. Currently, the matlab file is expected to have an array "PCMR" that should have the data stored in the following format [X Y Z T Mag U V W].
 **Code:**
 ```python FlowMRI_MatlabToVTK.py -InputFileName [MatlabData.mat]```
